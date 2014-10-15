@@ -44,7 +44,7 @@ public class LaunchCommand implements MainExecutor.ClientCommand {
         opts.addOption("id", true, "the id of this task");
         opts.addOption("jar", true, "the jar name of this task");
         opts.addOption("class", true, "the class that will be called");
-        opts.addOption("group", true, "Optional. the group where the job will be submitted to, if not in cluster, it'll be submitted to default group.");
+        opts.addOption("group", true, "Optional. the group where the job will be submitted to. group default is default.");
         opts.addOption("type", true, "Optional. the type which the job is, including memory, cpu, network. memory is default.");
         return opts;
     }
