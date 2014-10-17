@@ -30,7 +30,7 @@ public class MagpieClient extends com.jd.magpie.auth.ThriftClient {
         String host = "10.12.218.221";
         int port = 6666;
         MagpieClient magpieClient = new MagpieClient(new HashMap(), host, port);
-        magpieClient.getClient().submitTopology("mysql", "tracker", "1025", null, null);
+        magpieClient.getClient().submitTopology("mysql", "tracker", "1025");
         magpieClient.close();
     }
 }
