@@ -79,6 +79,8 @@ public class Utils {
         return "/nimbus";
     }
 
+    public static String getSupervisorsPath() {return "/supervisors";}
+
     public static String getStatusPath() {
         return "/status";
     }
@@ -86,6 +88,8 @@ public class Utils {
     public static String getResourceWebServiceZkPath() {
         return "/webservice/resource";
     }
+
+    public static String getAssignmentsPath() { return "/assignments"; }
 
 
     public static String getStatusNode(String id) {
@@ -113,6 +117,14 @@ public class Utils {
 
     public static HashMap<String, Object> bytesToMap(byte[] bytes) throws UnsupportedEncodingException {
         return stringToMap(bytesToString(bytes));
+    }
+
+    public static int str2int(String str) {
+        if (str == null || str.equals("null")) {
+            return 0;
+        } else {
+            return Integer.parseInt(str);
+        }
     }
 
 }

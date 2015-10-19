@@ -39,13 +39,14 @@ public class LaunchCommand implements MainExecutor.ClientCommand {
     @Override
     public Options getOpts() {
         Options opts = new Options();
-        opts.addOption("host", true, "the host of Thrift Server, if not supplied, it'll get from the zookeeper.");
-        opts.addOption("port", true, "the port of Thrift Server, if not supplied, it'll get from the zookeeper.");
+        opts.addOption("host", true, "Optional. the host of Thrift Server, if not supplied, it'll get from the zookeeper.");
+        opts.addOption("port", true, "Optional. the port of Thrift Server, if not supplied, it'll get from the zookeeper.");
         opts.addOption("id", true, "the id of this task");
         opts.addOption("jar", true, "the jar name of this task");
         opts.addOption("class", true, "the class that will be called");
         opts.addOption("group", true, "Optional. the group where the job will be submitted to. group default is default.");
         opts.addOption("type", true, "Optional. the type which the job is, including memory, cpu, network. memory is default.");
+        opts.addOption("d", false, "Optional. the debug mode will print more info.");
         return opts;
     }
 
@@ -88,14 +89,13 @@ public class LaunchCommand implements MainExecutor.ClientCommand {
         if (group == null && type == null) {
             result = client.submitTopology(id, jar, klass);
         } else {
-
             if (group == null) {
-                group = "default";
+                group = Constants.TASK_GROUP_DEFAULT;
             }
             if (type == null) {
-                type = "memory";
+                type = Constants.TASK_TYPE_DEFAULT;
             }
-            if (!(type.equals("memory") || type.equals("cpu") || type.equals("network"))) {
+            if (!(type.equals(Constants.TASK_TYPE_MEMORY) || type.equals(Constants.TASK_TYPE_CPU) || type.equals(Constants.TASK_TYPE_NETWORK))) {
                 HelpFormatter f = new HelpFormatter();
                 f.printHelp("Usage:", getOpts());
                 throw new IOException("parameter TYPE error! type must be memory, cpu or network!");
@@ -103,6 +103,33 @@ public class LaunchCommand implements MainExecutor.ClientCommand {
             result = client.submitTask(id, jar, klass, group, type);
         }
         LOG.info(result);
+
+        if (cl.hasOption("d")) {
+            LOG.info("debug mode");
+            while (true) {
+                int times = 20;
+                if (times == 0) {
+                    LOG.info("time elapses 40s!, the task " + id + " hasn't submitted!");
+                    break;
+                }
+                byte[] assignmentBytes = zkUtils.getData(Utils.getAssignmentsPath() + "/" + id, false);
+                if (assignmentBytes == null) {
+                    LOG.info("assignments node not exists!");
+                    times --;
+                    Thread.sleep(2000);
+                    continue;
+                } else {
+                    HashMap<String, Object> assignmentInfo = Utils.bytesToMap(assignmentBytes);
+                    if (assignmentInfo.containsKey("supervisor")) {
+                        LOG.info("the task " + id + " has been submitted to supervisor: " + assignmentInfo.get("supervisor"));
+                        break;
+                    } else {
+                        LOG.info("the task " + id + " hasn't been submitted!");
+                        times --;
+                    }
+                }
+            }
+        }
         zkUtils.close();
     }
 

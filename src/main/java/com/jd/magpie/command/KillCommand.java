@@ -22,15 +22,15 @@ import java.util.Map;
 /**
  * Created with IntelliJ IDEA.
  * User: caishize
- * Date: 13-12-25
+ * Date: 15-04-28
  * Time: 下午5:23
  * To change this template use File | Settings | File Templates.
  */
-public class CommonCommand implements MainExecutor.ClientCommand {
-    private static final Logger LOG = LoggerFactory.getLogger(CommonCommand.class);
+public class KillCommand implements MainExecutor.ClientCommand {
+    private static final Logger LOG = LoggerFactory.getLogger(KillCommand.class);
     final String command;
 
-    public CommonCommand(String command) {
+    public KillCommand(String command) {
         this.command = command;
     }
 
@@ -40,6 +40,7 @@ public class CommonCommand implements MainExecutor.ClientCommand {
         opts.addOption("host", true, "the host of Thrift Server, if not supplied, it'll get from the zookeeper.");
         opts.addOption("port", true, "the port of Thrift Server, if not supplied, it'll get from the zookeeper.");
         opts.addOption("id", true, "the id of this task");
+        opts.addOption("d", false, "Optional. the debug mode will print more info.");
         return opts;
     }
 
@@ -76,14 +77,27 @@ public class CommonCommand implements MainExecutor.ClientCommand {
             throw new IOException("Parameters error!");
         }
         String result = null;
-        if (command.equals("pause")) {
-            result = client.pauseTopology(id);
-        } else if (command.equals("active")) {
-            result = client.activeTopology(id);
-        } else if (command.equals("reload")) {
-            result = client.reloadTopology(id);
-        }
+        result = client.killTopology(id);
         LOG.info(result);
+        if (cl.hasOption("d")) {
+            LOG.info("debug mode");
+            while (true) {
+                int times = 20;
+                if (times == 0) {
+                    LOG.info("time elapses 40s!, the task " + id + " hasn't been killed!");
+                    break;
+                }
+                if (zkUtils.checkExists(Utils.getAssignmentsPath() + "/" + id)) {
+                    LOG.warn("task " + id + " still exists in /assignments now! Hasn't been killed");
+                    times --;
+                    Thread.sleep(2000);
+                    continue;
+                } else {
+                    LOG.info("task " + id + " has been killed!");
+                    break;
+                }
+            }
+        }
         zkUtils.close();
     }
 }

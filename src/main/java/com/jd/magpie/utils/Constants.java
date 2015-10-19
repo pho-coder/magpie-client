@@ -11,4 +11,11 @@ public class Constants {
     final public static String ZKSERVERS = "magpie.zookeeper.servers";
     final public static String ZKPORT = "magpie.zookeeper.port";
     final public static String ZKROOT = "magpie.zookeeper.root";
+
+    final public static String TASK_GROUP_DEFAULT = "default";
+
+    final public static String TASK_TYPE_DEFAULT = "memory";
+    final public static String TASK_TYPE_MEMORY = "memory";
+    final public static String TASK_TYPE_CPU = "cpu";
+    final public static String TASK_TYPE_NETWORK = "network";
 }

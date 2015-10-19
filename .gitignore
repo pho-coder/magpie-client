@@ -1,5 +1,5 @@
 *.class
-magpie-client.iml
+*.iml
 .idea/
 target/
 

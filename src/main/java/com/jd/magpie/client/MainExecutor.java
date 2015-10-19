@@ -1,10 +1,7 @@
 package com.jd.magpie.client;
 
-import com.jd.magpie.command.CommonCommand;
+import com.jd.magpie.command.*;
 import com.jd.magpie.utils.Utils;
-import com.jd.magpie.command.ConfigCommand;
-import com.jd.magpie.command.LaunchCommand;
-import com.jd.magpie.command.StatusCommand;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -86,12 +83,13 @@ public class MainExecutor {
         HelpCommand help = new HelpCommand(commands);
         commands.put("help", help);
         commands.put("submit", new LaunchCommand("submit"));
-        commands.put("kill", new CommonCommand("kill"));
+        commands.put("kill", new KillCommand("kill"));
         commands.put("pause", new CommonCommand("pause"));
         commands.put("active", new CommonCommand("active"));
         commands.put("reload", new CommonCommand("reload"));
         commands.put("getStatus", new StatusCommand());
         commands.put("setWebService", new ConfigCommand());
+        commands.put("info", new InfoCommand());
 
         String commandName = null;
         String[] commandArgs = null;
