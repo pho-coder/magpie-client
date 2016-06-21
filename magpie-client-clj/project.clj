@@ -9,4 +9,8 @@
                  [org.apache.thrift/libthrift "0.9.1"]
                  [clj-zookeeper "0.2.0-SNAPSHOT"]
                  [com.jd.bdp.magpie/magpie-utils "0.1.3-SNAPSHOT"]]
-  :main ^:skip-aot com.jd.bdp.magpie.client)
+  :main ^:skip-aot com.jd.bdp.magpie.magpie-client.client
+  :source-paths ["src/clj"]
+  :java-source-paths ["src/java"]
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all}})
